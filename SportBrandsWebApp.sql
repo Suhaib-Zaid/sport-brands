@@ -1,0 +1,91 @@
+DROP DATABASE IF EXISTS SportBrandsWebApp;
+CREATE DATABASE SportBrandsWebApp CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE SportBrandsWebApp;
+
+CREATE TABLE Users (
+  User_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Username VARCHAR(50) NOT NULL UNIQUE,
+  Password VARCHAR(255) NOT NULL,
+  Phone VARCHAR(20),
+  Role ENUM('customer', 'owner', 'admin') DEFAULT 'customer',
+  Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Categories (
+  Category_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Name_Ar VARCHAR(100) NOT NULL,
+  Name_En VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Products (
+  Product_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Name_Ar VARCHAR(100) NOT NULL,
+  Name_En VARCHAR(100) NOT NULL,
+  Description TEXT,
+  Price DECIMAL(10,2) NOT NULL,
+  Quantity INT DEFAULT 0,
+  Image_URL TEXT,
+  Category_ID INT,
+  Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (Category_ID) REFERENCES Categories(Category_ID)
+);
+
+CREATE TABLE Product_Sizes (
+  ID INT AUTO_INCREMENT PRIMARY KEY,
+  Product_ID INT,
+  Size VARCHAR(20),
+  FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE Product_Colors (
+  ID INT AUTO_INCREMENT PRIMARY KEY,
+  Product_ID INT,
+  Color VARCHAR(30),
+  FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID) ON DELETE CASCADE
+);
+
+CREATE TABLE Orders (
+  Order_ID INT AUTO_INCREMENT PRIMARY KEY,
+  User_ID INT,
+  Customer_Name VARCHAR(100) NOT NULL,
+  Phone VARCHAR(20) NOT NULL,
+  Location VARCHAR(200) NOT NULL,
+  Order_Date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (User_ID) REFERENCES Users(User_ID)
+);
+
+CREATE TABLE Order_Details (
+  Detail_ID INT AUTO_INCREMENT PRIMARY KEY,
+  Order_ID INT,
+  Product_ID INT,
+  Quantity INT DEFAULT 1,
+  FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
+  FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID)
+);
+
+CREATE TABLE Admin_Logs (
+  Log_ID INT AUTO_INCREMENT PRIMARY KEY,
+  User_ID INT,
+  Action VARCHAR(255),
+  Action_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (User_ID) REFERENCES Users(User_ID)
+);
+
+CREATE TABLE Cart (
+  Cart_ID INT AUTO_INCREMENT PRIMARY KEY,
+  User_ID INT,
+  Product_ID INT,
+  Quantity INT DEFAULT 1,
+  Added_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (User_ID) REFERENCES Users(User_ID),
+  FOREIGN KEY (Product_ID) REFERENCES Products(Product_ID)
+);
+
+-- بيانات تجريبية
+
+SELECT * FROM Products ORDER BY Product_ID DESC;
+SELECT * FROM Product_Sizes;
+SELECT * FROM Product_Colors;
+
+
+
